@@ -1,12 +1,38 @@
-<!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quiniela Mundial 2026</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from '../App.jsx'
+
+if (!window.storage) {
+  window.storage = {
+    get: (key) => {
+      try {
+        const val = localStorage.getItem(key);
+        return Promise.resolve(val ? { key, value: val } : null);
+      } catch(e) { return Promise.resolve(null); }
+    },
+    set: (key, value) => {
+      try {
+        localStorage.setItem(key, value);
+        return Promise.resolve({ key, value });
+      } catch(e) { return Promise.resolve(null); }
+    },
+    delete: (key) => {
+      try {
+        localStorage.removeItem(key);
+        return Promise.resolve({ key, deleted: true });
+      } catch(e) { return Promise.resolve(null); }
+    },
+    list: (prefix) => {
+      try {
+        const keys = Object.keys(localStorage).filter(k => !prefix || k.startsWith(prefix));
+        return Promise.resolve({ keys });
+      } catch(e) { return Promise.resolve({ keys: [] }); }
+    }
+  };
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)
